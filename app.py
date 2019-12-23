@@ -12,7 +12,7 @@ posts = {
 
 @app.route("/")
 def home():
-    return "Hello world!"
+    return render_template("home.jinja2", posts=posts)
 
 
 @app.route("/post/<int:post_id>")
@@ -29,13 +29,16 @@ def form():
     return render_template("create.html")
 
 
-@app.route("/post/create", methods=["POST"])
+@app.route("/post/create", methods=["GET", "POST"])
 def create():
-    title = request.form.get("title")
-    content = request.form.get("content")
-    post_id = len(posts)
-    posts[post_id] = {"post_id": post_id, "title": title, "content": content}
-    return redirect(url_for("post", post_id=post_id))
+    if request.method == "POST":
+        title = request.form.get("title")
+        content = request.form.get("content")
+        post_id = len(posts)
+        posts[post_id] = {"post_id": post_id,
+                          "title": title, "content": content}
+        return redirect(url_for("post", post_id=post_id))
+    return render_template("create.html")
 
 
 if __name__ == "__main__":
